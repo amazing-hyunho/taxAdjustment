@@ -150,6 +150,28 @@ ul, ol { padding-left: 1.3rem; }
 .summary-card > div > span { color: #087c42; font-size: .8rem; font-weight: 900; }
 .summary-card h2 { margin-top: 2rem; }
 .summary-card p { font-size: 1.05rem; }
+.intro-study > .timer { margin: 1rem 0; }
+.intro-script { margin: 1rem 0; padding: 1.2rem; border: 1px solid color-mix(in srgb, var(--green) 45%, var(--line)); border-radius: 1.2rem; background: var(--surface); box-shadow: var(--shadow); }
+.intro-script__heading { display: flex; justify-content: space-between; align-items: start; gap: .8rem; margin-bottom: 1.2rem; }
+.intro-script__heading h2, .intro-script__heading .eyebrow { margin-bottom: 0; }
+.intro-script > p { margin: .8rem 0 0; font-size: 1.03rem; line-height: 1.75; }
+.intro-chunks { display: grid; gap: .7rem; }
+.intro-chunks article { padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
+.intro-chunks article > div { display: flex; justify-content: space-between; align-items: center; }
+.intro-chunks article > div > span { color: #087c42; font-size: .75rem; font-weight: 900; }
+.intro-chunks h3 { margin: .9rem 0 .3rem; }
+.intro-chunks strong { color: #087c42; font-size: .9rem; }
+.intro-chunks p { margin: .65rem 0 0; color: var(--muted); }
+.intro-answer { line-height: 1.75; }
+.intro-notes { display: grid; gap: .75rem; padding-left: 1.25rem; }
+.core-study > .timer { margin: 1rem 0; }
+.core-question-list { display: grid; gap: .6rem; padding: 0; list-style: none; }
+.core-question-list li { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: .65rem; min-height: 68px; padding: .75rem; border: 1px solid var(--line); border-radius: .9rem; background: var(--surface); }
+.core-question-list li > span { color: #087c42; font-size: .75rem; font-weight: 900; }
+.core-question-list p { margin: 0; font-weight: 750; line-height: 1.4; }
+.core-question-group { scroll-margin-top: 80px; }
+.core-cues { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0; }
+.accordion__body > h3 { margin: 1.2rem 0 .5rem; font-size: .95rem; }
 .accordion { margin: .75rem 0; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
 .accordion summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 64px; padding: .85rem 1rem; cursor: pointer; list-style: none; font-weight: 800; }
 .accordion summary::-webkit-details-marker { display: none; }
@@ -241,6 +263,7 @@ ul, ol { padding-left: 1.3rem; }
   .hero { padding: 2rem; }
   .hero__actions { grid-template-columns: 1fr 1fr; }
   .summary-stack, .lens-grid { grid-template-columns: 1fr 1fr; }
+  .intro-chunks { grid-template-columns: 1fr 1fr; }
   .timer-stack { grid-template-columns: 1fr 1fr; }
 }
 

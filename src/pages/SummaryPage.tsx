@@ -5,13 +5,16 @@ import { SourceList } from "../components/SourceList";
 import { lensTopics } from "../content/ai-investment";
 import { candidateStories } from "../content/candidate-stories";
 import { cfoProfile } from "../content/cfo-profile";
+import { coreInterviewQuestions, coreQuestionGroups } from "../content/core-interview-questions";
 import { pillar2 } from "../content/pillar2";
+import { selfIntroduction } from "../content/self-introduction";
 import { sources } from "../content/sources";
 import { summaryCards } from "../content/summary";
 import { useStories } from "../hooks/useStories";
 import type { CandidateStory, LensName } from "../types";
+import { Timer } from "../components/Timer";
 
-type SummaryTab = "3분 요약" | "CFO 렌즈" | "내 경험" | "출처";
+type SummaryTab = "3분 요약" | "자기소개" | "핵심 15" | "CFO 렌즈" | "내 경험" | "출처";
 const fieldLabels: Record<keyof CandidateStory["fields"], string> = {
   situation: "상황 / 과제",
   role: "내가 맡은 역할",
@@ -33,11 +36,11 @@ export function SummaryPage() {
     <main id="main-content" className="page">
       <header className="page-header">
         <p className="eyebrow">SHORT LOOP</p>
-        <h1>3분 요약과 CFO 렌즈</h1>
-        <p>길게 읽지 말고 카드마다 한 문장으로 소리 내어 요약하세요.</p>
+        <h1>3분 요약과 실전 스크립트</h1>
+        <p>길게 읽지 말고 카드마다 한 문장으로 소리 내어 반복하세요.</p>
       </header>
       <div className="segmented segmented--scroll" role="tablist" aria-label="요약 메뉴">
-        {(["3분 요약", "CFO 렌즈", "내 경험", "출처"] as SummaryTab[]).map((item) => (
+        {(["3분 요약", "자기소개", "핵심 15", "CFO 렌즈", "내 경험", "출처"] as SummaryTab[]).map((item) => (
           <button
             key={item}
             type="button"
@@ -76,6 +79,131 @@ export function SummaryPage() {
             <SourceList ids={pillar2.sourceIds} />
           </Accordion>
         </>
+      )}
+
+      {tab === "자기소개" && (
+        <section className="intro-study">
+          <div className="callout">
+            <strong>이 답변의 한 줄</strong>
+            <p>{selfIntroduction.coreMessage}</p>
+          </div>
+
+          <Timer seconds={60} label="자기소개 연습" />
+
+          <article className="intro-script">
+            <div className="intro-script__heading">
+              <div>
+                <p className="eyebrow">FULL SCRIPT</p>
+                <h2>60초 자기소개 완성본</h2>
+              </div>
+              <Badge>소리 내어 3회</Badge>
+            </div>
+            {selfIntroduction.fullAnswer.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </article>
+
+          <Accordion title="30초 압축본" eyebrow="갑작스러운 요청 대비">
+            <p className="intro-answer">{selfIntroduction.shortAnswer}</p>
+          </Accordion>
+          <Accordion title="90초 확장본" eyebrow="경력과 리더십까지 충분히">
+            {selfIntroduction.extendedAnswer.map((paragraph) => <p className="intro-answer" key={paragraph}>{paragraph}</p>)}
+          </Accordion>
+
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">MEMORY CHUNKS</p>
+              <h2>키워드만 보고 말하기</h2>
+            </div>
+          </div>
+          <div className="intro-chunks">
+            {selfIntroduction.chunks.map((chunk, index) => (
+              <article key={chunk.title}>
+                <div>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <Badge>{chunk.time}</Badge>
+                </div>
+                <h3>{chunk.title}</h3>
+                <strong>{chunk.cue}</strong>
+                <p>{chunk.text}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">FOLLOW-UP DRILL</p>
+              <h2>바로 이어질 꼬리질문</h2>
+            </div>
+          </div>
+          {selfIntroduction.followUps.map((item, index) => (
+            <Accordion key={item.question} title={item.question} eyebrow={`꼬리질문 ${index + 1}`}>
+              <p className="answer-prompt"><strong>암기 키워드</strong><br />{item.cue}</p>
+              <p className="intro-answer">{item.answer}</p>
+            </Accordion>
+          ))}
+
+          <Accordion title="말할 때 주의할 표현" eyebrow="최종 점검">
+            <ul className="intro-notes">
+              {selfIntroduction.coachingNotes.map((note) => <li key={note}>{note}</li>)}
+            </ul>
+          </Accordion>
+        </section>
+      )}
+
+      {tab === "핵심 15" && (
+        <section className="core-study">
+          <div className="callout">
+            <strong>지하철 10분 루틴</strong>
+            <p>질문만 훑기 → 한 문제를 60초로 답하기 → 막힌 문제의 키워드와 꼬리질문 확인.</p>
+          </div>
+          <Timer seconds={60} label="핵심 질문 1문답" />
+
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">QUESTION ONLY</p>
+              <h2>15개 질문 빠르게 훑기</h2>
+            </div>
+          </div>
+          <ol className="core-question-list">
+            {coreInterviewQuestions.map((item) => (
+              <li key={item.id}>
+                <span>{String(item.id).padStart(2, "0")}</span>
+                <p>{item.question}</p>
+                <Badge>{item.status}</Badge>
+              </li>
+            ))}
+          </ol>
+
+          {coreQuestionGroups.map((group) => (
+            <section className="core-question-group" key={group}>
+              <div className="section-heading">
+                <div>
+                  <p className="eyebrow">CORE QUESTIONS</p>
+                  <h2>{group}</h2>
+                </div>
+              </div>
+              {coreInterviewQuestions.filter((item) => item.category === group).map((item) => (
+                <Accordion
+                  key={item.id}
+                  title={`${String(item.id).padStart(2, "0")}. ${item.question}`}
+                  eyebrow={item.status}
+                >
+                  <p className="answer-prompt"><strong>한 줄 결론</strong><br />{item.thesis}</p>
+                  <div className="core-cues" aria-label="암기 키워드">
+                    {item.cues.map((cue) => <Badge key={cue}>{cue}</Badge>)}
+                  </div>
+                  <h3>답변 뼈대</h3>
+                  <ol className="intro-notes">
+                    {item.framework.map((line) => <li key={line}>{line}</li>)}
+                  </ol>
+                  <h3>이어질 압박 질문</h3>
+                  <ul className="intro-notes">
+                    {item.followUps.map((question) => <li key={question}>{question}</li>)}
+                  </ul>
+                </Accordion>
+              ))}
+            </section>
+          ))}
+        </section>
       )}
 
       {tab === "CFO 렌즈" && (
