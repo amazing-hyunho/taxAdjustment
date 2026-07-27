@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CFO Drill">
+  <rect width="512" height="512" rx="112" fill="#081d16"/>
+  <path d="M112 120h84l120 168V120h84v272h-84L196 224v168h-84z" fill="#03c75a"/>
+  <circle cx="384" cy="368" r="44" fill="#f8fffb"/>
+  <path d="m366 368 13 13 24-28" fill="none" stroke="#081d16" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
