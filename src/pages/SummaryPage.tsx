@@ -14,7 +14,7 @@ import { useStories } from "../hooks/useStories";
 import type { CandidateStory, LensName } from "../types";
 import { Timer } from "../components/Timer";
 
-type SummaryTab = "3분 요약" | "자기소개" | "핵심 15" | "CFO 렌즈" | "내 경험" | "출처";
+type SummaryTab = "3분 요약" | "자기소개" | "핵심 질문" | "CFO 렌즈" | "내 경험" | "출처";
 const fieldLabels: Record<keyof CandidateStory["fields"], string> = {
   situation: "상황 / 과제",
   role: "내가 맡은 역할",
@@ -40,7 +40,7 @@ export function SummaryPage() {
         <p>길게 읽지 말고 카드마다 한 문장으로 소리 내어 반복하세요.</p>
       </header>
       <div className="segmented segmented--scroll" role="tablist" aria-label="요약 메뉴">
-        {(["3분 요약", "자기소개", "핵심 15", "CFO 렌즈", "내 경험", "출처"] as SummaryTab[]).map((item) => (
+        {(["3분 요약", "자기소개", "핵심 질문", "CFO 렌즈", "내 경험", "출처"] as SummaryTab[]).map((item) => (
           <button
             key={item}
             type="button"
@@ -71,6 +71,10 @@ export function SummaryPage() {
           <Accordion title="김희철 CFO 관련 사실과 면접 추론" eyebrow={`최종 확인 ${cfoProfile.verifiedAt}`}>
             <p><strong>확인된 사실</strong><br />{cfoProfile.fact}</p>
             <p><strong>면접 추론</strong><br />{cfoProfile.inference}</p>
+            <p><strong>답변에서 보여줄 관리 기준</strong></p>
+            <ul className="intro-notes">
+              {cfoProfile.priorities.map((priority) => <li key={priority}>{priority}</li>)}
+            </ul>
             <SourceList ids={cfoProfile.sourceIds} />
           </Accordion>
           <Accordion title="Pillar 2 답변의 안전선" eyebrow={`최종 확인 ${pillar2.verifiedAt}`}>
@@ -149,7 +153,7 @@ export function SummaryPage() {
         </section>
       )}
 
-      {tab === "핵심 15" && (
+      {tab === "핵심 질문" && (
         <section className="core-study">
           <div className="callout">
             <strong>지하철 10분 루틴</strong>
@@ -160,7 +164,7 @@ export function SummaryPage() {
           <div className="section-heading">
             <div>
               <p className="eyebrow">QUESTION ONLY</p>
-              <h2>15개 질문 빠르게 훑기</h2>
+              <h2>{coreInterviewQuestions.length}개 질문 빠르게 훑기</h2>
             </div>
           </div>
           <ol className="core-question-list">
@@ -236,6 +240,16 @@ export function SummaryPage() {
             const story = stories.find((item) => item.id === template.id) ?? template;
             return (
               <Accordion key={story.id} title={story.title} eyebrow={`STAR / CAR ${index + 1}`}>
+                {story.coaching && (
+                  <div className="callout">
+                    <strong>{story.coaching.headline}</strong>
+                    <p>{story.coaching.cfoTranslation}</p>
+                    <ol className="intro-notes">
+                      {story.coaching.answerOrder.map((line) => <li key={line}>{line}</li>)}
+                    </ol>
+                    <p className="muted">{story.coaching.caution}</p>
+                  </div>
+                )}
                 {(Object.entries(fieldLabels) as [keyof CandidateStory["fields"], string][]).map(([field, label]) => (
                   <div className="field" key={field}>
                     <label htmlFor={`${story.id}-${field}`}>{label}</label>

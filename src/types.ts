@@ -61,6 +61,12 @@ export interface StudyState {
 export interface CandidateStory {
   id: string;
   title: string;
+  coaching?: {
+    headline: string;
+    cfoTranslation: string;
+    answerOrder: string[];
+    caution: string;
+  };
   fields: {
     situation: string;
     role: string;
