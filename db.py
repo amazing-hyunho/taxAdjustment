@@ -44,6 +44,18 @@ def init_db() -> None:
             )
             """
         )
+        con.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_rows_data_import_date_group
+            ON rows_data(import_id, date_value, group_no)
+            """
+        )
+        con.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_rows_data_import_group
+            ON rows_data(import_id, group_no)
+            """
+        )
     finally:
         con.close()
 
@@ -92,9 +104,11 @@ def _build_where(filters: dict[str, Any]) -> tuple[str, list[Any]]:
     clauses = ["import_id = ?"]
     params: list[Any] = [filters["import_id"]]
 
-    if filters.get("search_text"):
-        clauses.append("search_text LIKE ?")
-        params.append(f"%{filters['search_text'].lower()}%")
+    search_tokens = _tokenize_search_text(filters.get("search_text", ""))
+    if search_tokens:
+        token_clauses = ["contains(search_text, ?)" for _ in search_tokens]
+        clauses.append("(" + " AND ".join(token_clauses) + ")")
+        params.extend(search_tokens)
 
     if filters.get("date_from") is not None:
         clauses.append("date_value >= ?")
@@ -109,6 +123,13 @@ def _build_where(filters: dict[str, Any]) -> tuple[str, list[Any]]:
         params.append(filters["group_no"])
 
     return " AND ".join(clauses), params
+
+
+def _tokenize_search_text(search_text: str) -> list[str]:
+    normalized = (search_text or "").strip().lower()
+    if not normalized:
+        return []
+    return [token for token in normalized.split() if token]
 
 
 def query_rows(

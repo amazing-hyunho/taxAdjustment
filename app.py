@@ -11,6 +11,30 @@ from db import count_rows, get_date_bounds, init_db, list_group_numbers, list_im
 from ingest import ingest_csv
 
 
+@st.cache_data(show_spinner=False, ttl=30)
+def cached_count_rows(import_id: str, search_text: str, date_from, date_to, group_no: str) -> int:
+    return count_rows(
+        import_id=import_id,
+        search_text=search_text,
+        date_from=date_from,
+        date_to=date_to,
+        group_no=group_no,
+    )
+
+
+@st.cache_data(show_spinner=False, ttl=30)
+def cached_query_rows(import_id: str, search_text: str, date_from, date_to, group_no: str, limit: int, offset: int) -> pd.DataFrame:
+    return query_rows(
+        import_id=import_id,
+        search_text=search_text,
+        date_from=date_from,
+        date_to=date_to,
+        group_no=group_no,
+        limit=limit,
+        offset=offset,
+    )
+
+
 def _safe_to_number(value):
     if value is None:
         return None
@@ -68,6 +92,8 @@ def render_upload_section() -> None:
     if st.button("DB로 저장", use_container_width=True):
         try:
             import_id = ingest_csv(uploaded)
+            cached_count_rows.clear()
+            cached_query_rows.clear()
             st.success(f"저장 완료: import_id={import_id}")
         except Exception as exc:
             st.error(f"업로드 실패: {exc}")
@@ -76,28 +102,34 @@ def render_upload_section() -> None:
 def render_filters(import_id: str):
     st.subheader("조회 필터")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        search_text = st.text_input("전역 검색 (search_text)", value="")
-    with c2:
-        group_options = ["전체"] + list_group_numbers(import_id)
-        selected_group = st.selectbox("구분번호", options=group_options)
+    with st.form("filters_form"):
+        c1, c2 = st.columns(2)
+        with c1:
+            search_text = st.text_input("전역 검색 (search_text)", value="")
+        with c2:
+            group_options = ["전체"] + list_group_numbers(import_id)
+            selected_group = st.selectbox("구분번호", options=group_options)
 
-    min_date, max_date = get_date_bounds(import_id)
-    if min_date and max_date:
-        date_range = st.date_input("날짜 범위", value=(min_date, max_date), min_value=min_date, max_value=max_date)
-        if isinstance(date_range, tuple) and len(date_range) == 2:
-            date_from, date_to = date_range
+        min_date, max_date = get_date_bounds(import_id)
+        if min_date and max_date:
+            date_range = st.date_input("날짜 범위", value=(min_date, max_date), min_value=min_date, max_value=max_date)
+            if isinstance(date_range, tuple) and len(date_range) == 2:
+                date_from, date_to = date_range
+            else:
+                date_from, date_to = min_date, max_date
         else:
-            date_from, date_to = min_date, max_date
-    else:
-        date_from, date_to = None, None
+            date_from, date_to = None, None
 
-    c3, c4 = st.columns(2)
-    with c3:
-        limit = st.number_input("조회 limit", min_value=50, max_value=5000, value=500, step=50)
-    with c4:
-        page = st.number_input("페이지", min_value=1, value=1, step=1)
+        c3, c4 = st.columns(2)
+        with c3:
+            limit = st.number_input("조회 limit", min_value=50, max_value=5000, value=500, step=50)
+        with c4:
+            page = st.number_input("페이지", min_value=1, value=1, step=1)
+        submitted = st.form_submit_button("조회", use_container_width=True)
+
+    if not submitted:
+        st.info("필터를 입력하고 조회 버튼을 눌러 검색하세요.")
+        return None
 
     return {
         "search_text": search_text,
@@ -111,7 +143,7 @@ def render_filters(import_id: str):
 
 def render_grid(import_id: str, filters: dict):
     offset = (filters["page"] - 1) * filters["limit"]
-    total_rows = count_rows(
+    total_rows = cached_count_rows(
         import_id=import_id,
         search_text=filters["search_text"],
         date_from=filters["date_from"],
@@ -121,7 +153,7 @@ def render_grid(import_id: str, filters: dict):
     total_pages = max(1, ceil(total_rows / filters["limit"])) if filters["limit"] else 1
     st.caption(f"조회 결과: {total_rows:,}건 / 페이지 {filters['page']} / {total_pages}")
 
-    raw_df = query_rows(
+    raw_df = cached_query_rows(
         import_id=import_id,
         search_text=filters["search_text"],
         date_from=filters["date_from"],
@@ -175,6 +207,8 @@ def main() -> None:
     selected_import_id = selected_label.split(" | ")[0]
 
     filters = render_filters(selected_import_id)
+    if not filters:
+        return
     render_grid(selected_import_id, filters)
 
 
