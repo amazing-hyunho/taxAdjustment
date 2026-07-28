@@ -2,7 +2,6 @@ export type Category =
   | "CFO 관점"
   | "AI 투자"
   | "두나무 거래"
-  | "회계"
   | "세무"
   | "Pillar 2"
   | "경력 연결"

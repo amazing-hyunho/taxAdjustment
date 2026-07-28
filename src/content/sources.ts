@@ -32,7 +32,7 @@ export const sources: Source[] = [
   },
   {
     id: "naver-cfo-profile",
-    title: "이사회 구성: 김희철 CFO 주요 경력",
+    title: "이사회 구성: NAVER CFO 주요 경력",
     publisher: "NAVER",
     publishedAt: "2026-03-20",
     url: "https://www.navercorp.com/investment/corporateGovernance",
@@ -41,7 +41,7 @@ export const sources: Source[] = [
   },
   {
     id: "naver-cfo-board",
-    title: "제27기 정기주주총회: 김희철 CFO 사내이사 선임",
+    title: "제27기 정기주주총회: CFO 사내이사 선임",
     publisher: "NAVER",
     publishedAt: "2026-03-20",
     url: "https://www.navercorp.com/media/pressReleasesDetail?seq=34436",

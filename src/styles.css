@@ -166,7 +166,7 @@ ul, ol { padding-left: 1.3rem; }
 .intro-notes { display: grid; gap: .75rem; padding-left: 1.25rem; }
 .core-study > .timer { margin: 1rem 0; }
 .core-question-list { display: grid; gap: .6rem; padding: 0; list-style: none; }
-.core-question-list li { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: .65rem; min-height: 68px; padding: .75rem; border: 1px solid var(--line); border-radius: .9rem; background: var(--surface); }
+.core-question-list li { display: grid; grid-template-columns: 32px 1fr; align-items: center; gap: .65rem; min-height: 68px; padding: .75rem; border: 1px solid var(--line); border-radius: .9rem; background: var(--surface); }
 .core-question-list li > span { color: #087c42; font-size: .75rem; font-weight: 900; }
 .core-question-list p { margin: 0; font-weight: 750; line-height: 1.4; }
 .core-question-group { scroll-margin-top: 80px; }

@@ -1,6 +1,6 @@
 export const summaryCards = [
   {
-    title: "김희철 CFO 한 줄 정의",
+    title: "NAVER CFO 한 줄 정의",
     text: "재무관리·CV센터를 거친 내부 관리형 배경 위에서 AI·글로벌 투자와 두나무 거래의 세후 가치를 판단할 CFO.",
     label: "면접 추론",
   },

@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { coreInterviewQuestions } from "./core-interview-questions";
 
-describe("핵심 면접 질문 16개", () => {
-  it("순서와 상태를 유지한다", () => {
-    expect(coreInterviewQuestions).toHaveLength(16);
+describe("핵심 면접 질문 20개", () => {
+  it("질문 순서를 유지한다", () => {
+    expect(coreInterviewQuestions).toHaveLength(20);
     expect(coreInterviewQuestions.map((item) => item.id)).toEqual(
-      Array.from({ length: 16 }, (_, index) => index + 1),
+      Array.from({ length: 20 }, (_, index) => index + 1),
     );
-    expect(coreInterviewQuestions.slice(0, 4).every((item) => item.status === "답변 OK")).toBe(true);
   });
 
   it("각 질문에 지하철 학습용 단서와 꼬리질문이 있다", () => {

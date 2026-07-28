@@ -68,7 +68,7 @@ export function SummaryPage() {
               </article>
             ))}
           </div>
-          <Accordion title="김희철 CFO 관련 사실과 면접 추론" eyebrow={`최종 확인 ${cfoProfile.verifiedAt}`}>
+          <Accordion title="NAVER CFO 관련 사실과 면접 추론" eyebrow={`최종 확인 ${cfoProfile.verifiedAt}`}>
             <p><strong>확인된 사실</strong><br />{cfoProfile.fact}</p>
             <p><strong>면접 추론</strong><br />{cfoProfile.inference}</p>
             <p><strong>답변에서 보여줄 관리 기준</strong></p>
@@ -172,7 +172,6 @@ export function SummaryPage() {
               <li key={item.id}>
                 <span>{String(item.id).padStart(2, "0")}</span>
                 <p>{item.question}</p>
-                <Badge>{item.status}</Badge>
               </li>
             ))}
           </ol>
@@ -189,7 +188,6 @@ export function SummaryPage() {
                 <Accordion
                   key={item.id}
                   title={`${String(item.id).padStart(2, "0")}. ${item.question}`}
-                  eyebrow={item.status}
                 >
                   <p className="answer-prompt"><strong>한 줄 결론</strong><br />{item.thesis}</p>
                   <div className="core-cues" aria-label="암기 키워드">
