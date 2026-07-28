@@ -58,4 +58,18 @@ describe("핵심 질문 답변 메모", () => {
       });
     });
   });
+
+  it("작성한 메모에서 키워드를 자동 추출해 표시한다", () => {
+    window.localStorage.setItem(
+      CORE_NOTES_KEY,
+      JSON.stringify({ 1: "세무조사 대응으로 고지세액 680억을 110억으로 낮추고 재발 방지 통제를 만들었습니다." }),
+    );
+    render(<SummaryPage />);
+    fireEvent.click(screen.getByRole("tab", { name: "메모 답변" }));
+
+    const keywordRegion = screen.getByLabelText("자동 추출 키워드 · 질문 1");
+    expect(keywordRegion).toHaveTextContent("세무조사");
+    expect(keywordRegion).toHaveTextContent("고지세액");
+    expect(keywordRegion).toHaveTextContent("680억");
+  });
 });

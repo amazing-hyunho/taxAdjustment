@@ -12,6 +12,7 @@ import { sources } from "../content/sources";
 import { summaryCards } from "../content/summary";
 import { useCoreQuestionNotes } from "../hooks/useCoreQuestionNotes";
 import { useStories } from "../hooks/useStories";
+import { extractKeywords } from "../lib/keywords";
 import type { CandidateStory, LensName } from "../types";
 import { Timer } from "../components/Timer";
 
@@ -199,14 +200,24 @@ export function SummaryPage() {
                     <label htmlFor={`core-question-note-${item.id}`}>
                       내가 생각하는 답변 메모 · 질문 {item.id}
                     </label>
-                    <textarea
-                      id={`core-question-note-${item.id}`}
+                  <textarea
+                    id={`core-question-note-${item.id}`}
                       rows={5}
                       value={coreQuestionNotes[String(item.id)] ?? ""}
                       placeholder="내 경험, 숫자, 실제로 말할 문장을 자유롭게 적으세요."
-                      onChange={(event) => updateCoreQuestionNote(item.id, event.target.value)}
-                    />
-                    <small>입력 내용은 이 브라우저에 자동 저장됩니다.</small>
+                    onChange={(event) => updateCoreQuestionNote(item.id, event.target.value)}
+                  />
+                  <small>입력 내용은 이 브라우저에 자동 저장됩니다.</small>
+                  {extractKeywords(coreQuestionNotes[String(item.id)] ?? "").length > 0 && (
+                    <div className="auto-keywords" aria-label={`자동 추출 키워드 · 질문 ${item.id}`}>
+                      <strong>자동 추출 키워드</strong>
+                      <div>
+                        {extractKeywords(coreQuestionNotes[String(item.id)] ?? "").map((keyword) => (
+                          <Badge key={keyword}>{keyword}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   </div>
                   <h3>이어질 압박 질문</h3>
                   <ul className="intro-notes">
@@ -242,6 +253,14 @@ export function SummaryPage() {
                 <div className="memo-answer__note">
                   <strong>내가 준비한 답변</strong>
                   <p>{coreQuestionNotes[String(item.id)]}</p>
+                </div>
+                <div className="auto-keywords" aria-label={`자동 추출 키워드 · 질문 ${item.id}`}>
+                  <strong>자동 추출 키워드</strong>
+                  <div>
+                    {extractKeywords(coreQuestionNotes[String(item.id)] ?? "").map((keyword) => (
+                      <Badge key={keyword}>{keyword}</Badge>
+                    ))}
+                  </div>
                 </div>
                 <h3>답변 전략</h3>
                 <p className="answer-prompt"><strong>한 줄 결론</strong><br />{item.thesis}</p>
