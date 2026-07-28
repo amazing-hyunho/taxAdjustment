@@ -3,6 +3,7 @@ import type { QuestionProgress, StudyState } from "../types";
 export const STORAGE_KEY = "naver-cfo-drill-state-v1";
 export const STORIES_KEY = "naver-cfo-drill-stories-v1";
 export const CORE_NOTES_KEY = "naver-cfo-drill-core-notes-v1";
+export const HIDDEN_CORE_QUESTIONS_KEY = "naver-cfo-drill-hidden-core-questions-v1";
 
 export const emptyProgress = (): QuestionProgress => ({
   completed: false,
@@ -34,6 +35,22 @@ export const parseCoreQuestionNotes = (raw: string | null): Record<string, strin
     );
   } catch {
     return {};
+  }
+};
+
+export const parseHiddenCoreQuestionIds = (raw: string | null): string[] => {
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return [...new Set(
+      parsed
+        .filter((id): id is string | number => typeof id === "string" || typeof id === "number")
+        .map(String)
+        .filter((id) => /^\d+$/.test(id)),
+    )].slice(0, 100);
+  } catch {
+    return [];
   }
 };
 

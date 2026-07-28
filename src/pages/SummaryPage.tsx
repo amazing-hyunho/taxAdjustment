@@ -11,6 +11,7 @@ import { selfIntroduction } from "../content/self-introduction";
 import { sources } from "../content/sources";
 import { summaryCards } from "../content/summary";
 import { useCoreQuestionNotes } from "../hooks/useCoreQuestionNotes";
+import { useHiddenCoreQuestions } from "../hooks/useHiddenCoreQuestions";
 import { useStories } from "../hooks/useStories";
 import { extractKeywords } from "../lib/keywords";
 import type { CandidateStory, LensName } from "../types";
@@ -33,8 +34,15 @@ export function SummaryPage() {
   const [tab, setTab] = useState<SummaryTab>("3분 요약");
   const [topic, setTopic] = useState<keyof typeof lensTopics>("GPU 투자");
   const { notes: coreQuestionNotes, updateNote: updateCoreQuestionNote } = useCoreQuestionNotes();
+  const { hiddenQuestionIds, setQuestionHidden } = useHiddenCoreQuestions();
   const { stories, updateField } = useStories();
-  const memoAnswers = coreInterviewQuestions.filter(
+  const visibleCoreQuestions = coreInterviewQuestions.filter(
+    (item) => !hiddenQuestionIds.includes(String(item.id)),
+  );
+  const hiddenCoreQuestions = coreInterviewQuestions.filter(
+    (item) => hiddenQuestionIds.includes(String(item.id)),
+  );
+  const memoAnswers = visibleCoreQuestions.filter(
     (item) => (coreQuestionNotes[String(item.id)] ?? "").trim().length > 0,
   );
 
@@ -163,17 +171,44 @@ export function SummaryPage() {
           <div className="section-heading">
             <div>
               <p className="eyebrow">QUESTION ONLY</p>
-              <h2>{coreInterviewQuestions.length}개 질문 빠르게 훑기</h2>
+              <h2>{visibleCoreQuestions.length}개 질문 빠르게 훑기</h2>
             </div>
           </div>
           <ol className="core-question-list">
-            {coreInterviewQuestions.map((item) => (
+            {visibleCoreQuestions.map((item) => (
               <li key={item.id}>
                 <span>{String(item.id).padStart(2, "0")}</span>
                 <p>{item.question}</p>
+                <label className="question-visibility-toggle">
+                  <input
+                    type="checkbox"
+                    aria-label={`질문 ${item.id} 노출하지 않기`}
+                    onChange={(event) => setQuestionHidden(item.id, event.target.checked)}
+                  />
+                  <span>노출하지 않기</span>
+                </label>
               </li>
             ))}
           </ol>
+
+          {hiddenCoreQuestions.length > 0 && (
+            <Accordion title={`숨긴 질문 관리 · ${hiddenCoreQuestions.length}개`} eyebrow="다시 노출하기">
+              <p className="muted">체크를 해제하면 빠른 목록·상세 질문·메모 답변 탭에 다시 표시됩니다.</p>
+              <div className="hidden-question-list">
+                {hiddenCoreQuestions.map((item) => (
+                  <label key={item.id}>
+                    <input
+                      type="checkbox"
+                      checked
+                      aria-label={`숨긴 질문 ${item.id} 다시 노출하기`}
+                      onChange={(event) => setQuestionHidden(item.id, event.target.checked)}
+                    />
+                    <span><strong>{String(item.id).padStart(2, "0")}</strong> {item.question}</span>
+                  </label>
+                ))}
+              </div>
+            </Accordion>
+          )}
 
           {coreQuestionGroups.map((group) => (
             <section className="core-question-group" key={group}>
@@ -183,7 +218,7 @@ export function SummaryPage() {
                   <h2>{group}</h2>
                 </div>
               </div>
-              {coreInterviewQuestions.filter((item) => item.category === group).map((item) => (
+              {visibleCoreQuestions.filter((item) => item.category === group).map((item) => (
                 <Accordion
                   key={item.id}
                   title={`${String(item.id).padStart(2, "0")}. ${item.question}`}
