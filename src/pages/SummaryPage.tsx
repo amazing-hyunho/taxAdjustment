@@ -106,7 +106,7 @@ export function SummaryPage() {
             <p>{selfIntroduction.coreMessage}</p>
           </div>
 
-          <Timer seconds={60} label="자기소개 연습" />
+          <Timer seconds={90} label="자기소개 원문 연습" />
 
           <article className="intro-script">
             <div className="intro-script__heading">
