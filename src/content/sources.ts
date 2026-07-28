@@ -1,6 +1,6 @@
 import type { Source } from "../types";
 
-export const LAST_VERIFIED = "2026-07-27";
+export const LAST_VERIFIED = "2026-07-28";
 
 export const sources: Source[] = [
   {
@@ -72,6 +72,24 @@ export const sources: Source[] = [
     publisher: "NAVER",
     publishedAt: "2026-07-24",
     url: "https://www.navercorp.com/media/pressReleasesDetail?seq=10034517",
+    verifiedAt: LAST_VERIFIED,
+    type: "회사 발표",
+  },
+  {
+    id: "naver-nvidia-alliance",
+    title: "NAVER·NVIDIA, GW급 AI 팩토리 글로벌 파트너십",
+    publisher: "NAVER",
+    publishedAt: "2026-06-08",
+    url: "https://www.navercorp.com/media/pressReleasesDetail?seq=10034386",
+    verifiedAt: LAST_VERIFIED,
+    type: "회사 발표",
+  },
+  {
+    id: "nvidia-ai-investment",
+    title: "NAVER·NVIDIA·Brookfield, 한국 AI 팩토리 인프라 확대",
+    publisher: "NVIDIA",
+    publishedAt: "2026-07-24",
+    url: "https://nvidianews.nvidia.com/news/naver-nvidia-and-brookfield-to-expand-koreas-national-ai-factory-infrastructure-buildout",
     verifiedAt: LAST_VERIFIED,
     type: "회사 발표",
   },
