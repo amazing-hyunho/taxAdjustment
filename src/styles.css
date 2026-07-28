@@ -171,6 +171,9 @@ ul, ol { padding-left: 1.3rem; }
 .core-question-list p { margin: 0; font-weight: 750; line-height: 1.4; }
 .core-question-group { scroll-margin-top: 80px; }
 .core-cues { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0; }
+.core-question-note { margin: 1.2rem 0; padding: 1rem; border: 1px solid color-mix(in srgb, var(--green) 42%, var(--line)); border-radius: .9rem; background: var(--green-soft); }
+.core-question-note textarea { background: var(--surface); }
+.core-question-note small { color: var(--muted); }
 .accordion__body > h3 { margin: 1.2rem 0 .5rem; font-size: .95rem; }
 .accordion { margin: .75rem 0; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
 .accordion summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 64px; padding: .85rem 1rem; cursor: pointer; list-style: none; font-weight: 800; }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateStreak, parseStudyState, sanitizeProgress } from "./storage";
+import { calculateStreak, parseCoreQuestionNotes, parseStudyState, sanitizeProgress } from "./storage";
 
 describe("학습 상태 저장", () => {
   it("손상된 localStorage를 초기 상태로 복구한다", () => {
@@ -23,5 +23,13 @@ describe("학습 상태 저장", () => {
   it("오늘부터 이어진 연속 학습일을 계산한다", () => {
     expect(calculateStreak(["2026-07-25", "2026-07-26", "2026-07-27"], new Date(2026, 6, 27))).toBe(3);
     expect(calculateStreak(["2026-07-25", "2026-07-26"], new Date(2026, 6, 27))).toBe(2);
+  });
+
+  it("핵심 질문 메모를 안전하게 복구하고 길이를 제한한다", () => {
+    expect(parseCoreQuestionNotes("{broken")).toEqual({});
+    expect(parseCoreQuestionNotes(JSON.stringify({ 1: "내 답변", bad: 12, 2: "a".repeat(6000) }))).toEqual({
+      1: "내 답변",
+      2: "a".repeat(5000),
+    });
   });
 });

@@ -10,6 +10,7 @@ import { pillar2 } from "../content/pillar2";
 import { selfIntroduction } from "../content/self-introduction";
 import { sources } from "../content/sources";
 import { summaryCards } from "../content/summary";
+import { useCoreQuestionNotes } from "../hooks/useCoreQuestionNotes";
 import { useStories } from "../hooks/useStories";
 import type { CandidateStory, LensName } from "../types";
 import { Timer } from "../components/Timer";
@@ -30,6 +31,7 @@ const fieldLabels: Record<keyof CandidateStory["fields"], string> = {
 export function SummaryPage() {
   const [tab, setTab] = useState<SummaryTab>("3분 요약");
   const [topic, setTopic] = useState<keyof typeof lensTopics>("GPU 투자");
+  const { notes: coreQuestionNotes, updateNote: updateCoreQuestionNote } = useCoreQuestionNotes();
   const { stories, updateField } = useStories();
 
   return (
@@ -197,6 +199,19 @@ export function SummaryPage() {
                   <ol className="intro-notes">
                     {item.framework.map((line) => <li key={line}>{line}</li>)}
                   </ol>
+                  <div className="field core-question-note">
+                    <label htmlFor={`core-question-note-${item.id}`}>
+                      내가 생각하는 답변 메모 · 질문 {item.id}
+                    </label>
+                    <textarea
+                      id={`core-question-note-${item.id}`}
+                      rows={5}
+                      value={coreQuestionNotes[String(item.id)] ?? ""}
+                      placeholder="내 경험, 숫자, 실제로 말할 문장을 자유롭게 적으세요."
+                      onChange={(event) => updateCoreQuestionNote(item.id, event.target.value)}
+                    />
+                    <small>입력 내용은 이 브라우저에 자동 저장됩니다.</small>
+                  </div>
                   <h3>이어질 압박 질문</h3>
                   <ul className="intro-notes">
                     {item.followUps.map((question) => <li key={question}>{question}</li>)}

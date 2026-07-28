@@ -2,6 +2,7 @@ import type { QuestionProgress, StudyState } from "../types";
 
 export const STORAGE_KEY = "naver-cfo-drill-state-v1";
 export const STORIES_KEY = "naver-cfo-drill-stories-v1";
+export const CORE_NOTES_KEY = "naver-cfo-drill-core-notes-v1";
 
 export const emptyProgress = (): QuestionProgress => ({
   completed: false,
@@ -19,6 +20,22 @@ export const initialState: StudyState = {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+export const parseCoreQuestionNotes = (raw: string | null): Record<string, string> => {
+  if (!raw) return {};
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!isRecord(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed)
+        .filter(([id, note]) => /^\d+$/.test(id) && typeof note === "string")
+        .slice(0, 100)
+        .map(([id, note]) => [id, (note as string).slice(0, 5000)]),
+    );
+  } catch {
+    return {};
+  }
+};
 
 export const sanitizeProgress = (value: unknown): QuestionProgress => {
   if (!isRecord(value)) return emptyProgress();
