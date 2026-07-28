@@ -131,6 +131,12 @@ ul, ol { padding-left: 1.3rem; }
 .question-list small, .question-list strong { display: block; }
 .question-list small { margin-bottom: .2rem; color: var(--muted); font-size: .72rem; }
 .question-list strong { line-height: 1.38; }
+.home-core-list { display: grid; gap: .7rem; }
+.home-core-question { padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); box-shadow: var(--shadow); }
+.home-core-question__heading { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
+.home-core-question h3 { margin: .9rem 0; font-size: 1rem; }
+.keyword-editor input { width: 100%; min-height: 44px; padding: .7rem .75rem; color: var(--text); border: 1px solid var(--line); border-radius: .75rem; background: var(--surface); }
+.keyword-editor small { color: var(--muted); }
 .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin-top: 1.5rem; }
 .quick-grid button { min-height: 135px; padding: 1rem; text-align: left; border: 0; border-radius: 1.2rem; background: var(--surface); box-shadow: var(--shadow); cursor: pointer; }
 .quick-grid button:first-child { background: var(--green); color: #06160e; }

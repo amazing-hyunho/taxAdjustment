@@ -1,12 +1,13 @@
 import { useMemo } from "react";
 import { cfoProfile } from "../content/cfo-profile";
+import { coreInterviewQuestions } from "../content/core-interview-questions";
 import { questions } from "../content/questions";
-import type { QuestionProgress } from "../types";
+import { useCoreQuestionKeywords } from "../hooks/useCoreQuestionKeywords";
+import { useHiddenCoreQuestions } from "../hooks/useHiddenCoreQuestions";
 import { Badge } from "../components/Badge";
 import type { PageId } from "../components/BottomNav";
 
 interface HomePageProps {
-  progress: Record<string, QuestionProgress>;
   stats: { completed: number; weak: number; attempts: number; streak: number };
   lastStudyDate?: string;
   online: boolean;
@@ -15,19 +16,26 @@ interface HomePageProps {
 }
 
 export function HomePage({
-  progress,
   stats,
   lastStudyDate,
   online,
   onNavigate,
   onStartQuestion,
 }: HomePageProps) {
-  const dailyQuestions = useMemo(() => {
-    const day = new Date().getDate();
-    return Array.from({ length: 5 }, (_, index) => questions[(day * 7 + index * 11) % questions.length]).filter(
-      (item): item is (typeof questions)[number] => Boolean(item),
+  const { hiddenQuestionIds } = useHiddenCoreQuestions();
+  const { getKeywordText, getKeywords, updateKeywordText } = useCoreQuestionKeywords();
+  const dailyCoreQuestions = useMemo(() => {
+    const visibleQuestions = coreInterviewQuestions.filter(
+      (item) => !hiddenQuestionIds.includes(String(item.id)),
     );
-  }, []);
+    const day = new Date().getDate();
+    return Array.from(
+      { length: Math.min(5, visibleQuestions.length) },
+      (_, index) => visibleQuestions[(day * 7 + index * 11) % visibleQuestions.length],
+    ).filter(
+      (item): item is (typeof coreInterviewQuestions)[number] => Boolean(item),
+    );
+  }, [hiddenQuestionIds]);
   const completionRate = Math.round((stats.completed / questions.length) * 100);
 
   return (
@@ -80,21 +88,33 @@ export function HomePage({
         <div className="section-heading">
           <div>
             <p className="eyebrow">TODAY'S FIVE</p>
-            <h2 id="daily-title">면접까지 오늘의 핵심 5개</h2>
+            <h2 id="daily-title">오늘 준비할 핵심 질문</h2>
           </div>
         </div>
-        <div className="question-list">
-          {dailyQuestions.map((question, index) => (
-            <button type="button" key={question.id} onClick={() => onStartQuestion(question.id)}>
-              <span className="question-list__number">0{index + 1}</span>
-              <span>
-                <small>{question.category} · {question.difficulty}</small>
-                <strong>{question.question}</strong>
-              </span>
-              <span aria-label={progress[question.id]?.completed ? "완료" : "미완료"}>
-                {progress[question.id]?.completed ? "✓" : "→"}
-              </span>
-            </button>
+        <div className="home-core-list">
+          {dailyCoreQuestions.map((question, index) => (
+            <article className="home-core-question" key={question.id}>
+              <div className="home-core-question__heading">
+                <span className="question-list__number">0{index + 1}</span>
+                <Badge>{question.category}</Badge>
+              </div>
+              <h3>{question.question}</h3>
+              <div className="field keyword-editor">
+                <label htmlFor={`home-core-keywords-${question.id}`}>
+                  답변 키워드 · 질문 {question.id}
+                </label>
+                <input
+                  id={`home-core-keywords-${question.id}`}
+                  value={getKeywordText(question)}
+                  onChange={(event) => updateKeywordText(question.id, event.target.value)}
+                  placeholder="키워드를 · 또는 쉼표로 구분하세요."
+                />
+                <div className="core-cues" aria-label={`사용자 키워드 · 질문 ${question.id}`}>
+                  {getKeywords(question).map((keyword) => <Badge key={keyword}>{keyword}</Badge>)}
+                </div>
+                <small>수정 내용은 이 브라우저에 자동 저장됩니다.</small>
+              </div>
+            </article>
           ))}
         </div>
       </section>

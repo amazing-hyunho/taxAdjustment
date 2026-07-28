@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { coreInterviewQuestions } from "../content/core-interview-questions";
-import { CORE_NOTES_KEY, HIDDEN_CORE_QUESTIONS_KEY } from "../lib/storage";
+import { CORE_NOTES_KEY, CORE_QUESTION_KEYWORDS_KEY, HIDDEN_CORE_QUESTIONS_KEY } from "../lib/storage";
 import { SummaryPage } from "./SummaryPage";
 
 describe("핵심 질문 답변 메모", () => {
@@ -106,5 +106,21 @@ describe("핵심 질문 답변 메모", () => {
 
     fireEvent.click(screen.getByRole("tab", { name: "메모 답변" }));
     expect(screen.getByLabelText("모아보기 답변 메모 · 질문 1")).toHaveValue("숨긴 질문의 답변");
+  });
+
+  it("사용자가 답변 키워드를 수정하면 자동 저장하고 배지에 반영한다", async () => {
+    render(<SummaryPage />);
+    fireEvent.click(screen.getByRole("tab", { name: "핵심 질문" }));
+
+    fireEvent.change(screen.getByLabelText("답변 키워드 수정 · 질문 1"), {
+      target: { value: "인하우스 · 의사결정, 사후 통제" },
+    });
+
+    await waitFor(() => {
+      expect(JSON.parse(window.localStorage.getItem(CORE_QUESTION_KEYWORDS_KEY) ?? "{}")).toMatchObject({
+        1: "인하우스 · 의사결정, 사후 통제",
+      });
+    });
+    expect(screen.getByLabelText("암기 키워드 · 질문 1")).toHaveTextContent("인하우스");
   });
 });

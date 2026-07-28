@@ -11,6 +11,7 @@ import { selfIntroduction } from "../content/self-introduction";
 import { sources } from "../content/sources";
 import { summaryCards } from "../content/summary";
 import { useCoreQuestionNotes } from "../hooks/useCoreQuestionNotes";
+import { useCoreQuestionKeywords } from "../hooks/useCoreQuestionKeywords";
 import { useHiddenCoreQuestions } from "../hooks/useHiddenCoreQuestions";
 import { useStories } from "../hooks/useStories";
 import { extractKeywords } from "../lib/keywords";
@@ -34,6 +35,7 @@ export function SummaryPage() {
   const [tab, setTab] = useState<SummaryTab>("3분 요약");
   const [topic, setTopic] = useState<keyof typeof lensTopics>("GPU 투자");
   const { notes: coreQuestionNotes, updateNote: updateCoreQuestionNote } = useCoreQuestionNotes();
+  const { getKeywordText, getKeywords, updateKeywordText } = useCoreQuestionKeywords();
   const { hiddenQuestionIds, setQuestionHidden } = useHiddenCoreQuestions();
   const { stories, updateField } = useStories();
   const visibleCoreQuestions = coreInterviewQuestions.filter(
@@ -224,8 +226,20 @@ export function SummaryPage() {
                   title={`${String(item.id).padStart(2, "0")}. ${item.question}`}
                 >
                   <p className="answer-prompt"><strong>한 줄 결론</strong><br />{item.thesis}</p>
-                  <div className="core-cues" aria-label="암기 키워드">
-                    {item.cues.map((cue) => <Badge key={cue}>{cue}</Badge>)}
+                  <div className="core-cues" aria-label={`암기 키워드 · 질문 ${item.id}`}>
+                    {getKeywords(item).map((cue) => <Badge key={cue}>{cue}</Badge>)}
+                  </div>
+                  <div className="field keyword-editor">
+                    <label htmlFor={`core-question-keywords-${item.id}`}>
+                      답변 키워드 수정 · 질문 {item.id}
+                    </label>
+                    <input
+                      id={`core-question-keywords-${item.id}`}
+                      value={getKeywordText(item)}
+                      onChange={(event) => updateKeywordText(item.id, event.target.value)}
+                      placeholder="키워드를 · 또는 쉼표로 구분하세요."
+                    />
+                    <small>수정한 키워드는 홈과 메모 답변에도 자동 반영됩니다.</small>
                   </div>
                   <h3>답변 뼈대</h3>
                   <ol className="intro-notes">
@@ -299,8 +313,8 @@ export function SummaryPage() {
                 </div>
                 <h3>답변 전략</h3>
                 <p className="answer-prompt"><strong>한 줄 결론</strong><br />{item.thesis}</p>
-                <div className="core-cues" aria-label="암기 키워드">
-                  {item.cues.map((cue) => <Badge key={cue}>{cue}</Badge>)}
+                <div className="core-cues" aria-label={`암기 키워드 · 질문 ${item.id}`}>
+                  {getKeywords(item).map((cue) => <Badge key={cue}>{cue}</Badge>)}
                 </div>
                 <ol className="intro-notes">
                   {item.framework.map((line) => <li key={line}>{line}</li>)}

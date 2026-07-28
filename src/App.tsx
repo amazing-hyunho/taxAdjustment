@@ -111,7 +111,6 @@ export default function App() {
 
       {page === "home" && (
         <HomePage
-          progress={state.questions}
           stats={stats}
           lastStudyDate={state.lastStudyDate}
           online={online}

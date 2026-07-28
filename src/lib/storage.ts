@@ -4,6 +4,7 @@ export const STORAGE_KEY = "naver-cfo-drill-state-v1";
 export const STORIES_KEY = "naver-cfo-drill-stories-v1";
 export const CORE_NOTES_KEY = "naver-cfo-drill-core-notes-v1";
 export const HIDDEN_CORE_QUESTIONS_KEY = "naver-cfo-drill-hidden-core-questions-v1";
+export const CORE_QUESTION_KEYWORDS_KEY = "naver-cfo-drill-core-question-keywords-v1";
 
 export const emptyProgress = (): QuestionProgress => ({
   completed: false,
@@ -51,6 +52,22 @@ export const parseHiddenCoreQuestionIds = (raw: string | null): string[] => {
     )].slice(0, 100);
   } catch {
     return [];
+  }
+};
+
+export const parseCoreQuestionKeywordOverrides = (raw: string | null): Record<string, string> => {
+  if (!raw) return {};
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!isRecord(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed)
+        .filter(([id, value]) => /^\d+$/.test(id) && typeof value === "string")
+        .slice(0, 100)
+        .map(([id, value]) => [id, (value as string).slice(0, 500)]),
+    );
+  } catch {
+    return {};
   }
 };
 
