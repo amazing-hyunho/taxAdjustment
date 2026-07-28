@@ -15,7 +15,7 @@ import { useStories } from "../hooks/useStories";
 import type { CandidateStory, LensName } from "../types";
 import { Timer } from "../components/Timer";
 
-type SummaryTab = "3분 요약" | "자기소개" | "핵심 질문" | "CFO 렌즈" | "내 경험" | "출처";
+type SummaryTab = "3분 요약" | "자기소개" | "핵심 질문" | "메모 답변" | "CFO 렌즈" | "내 경험" | "출처";
 const fieldLabels: Record<keyof CandidateStory["fields"], string> = {
   situation: "상황 / 과제",
   role: "내가 맡은 역할",
@@ -33,6 +33,9 @@ export function SummaryPage() {
   const [topic, setTopic] = useState<keyof typeof lensTopics>("GPU 투자");
   const { notes: coreQuestionNotes, updateNote: updateCoreQuestionNote } = useCoreQuestionNotes();
   const { stories, updateField } = useStories();
+  const memoAnswers = coreInterviewQuestions.filter(
+    (item) => (coreQuestionNotes[String(item.id)] ?? "").trim().length > 0,
+  );
 
   return (
     <main id="main-content" className="page">
@@ -42,7 +45,7 @@ export function SummaryPage() {
         <p>길게 읽지 말고 카드마다 한 문장으로 소리 내어 반복하세요.</p>
       </header>
       <div className="segmented segmented--scroll" role="tablist" aria-label="요약 메뉴">
-        {(["3분 요약", "자기소개", "핵심 질문", "CFO 렌즈", "내 경험", "출처"] as SummaryTab[]).map((item) => (
+        {(["3분 요약", "자기소개", "핵심 질문", "메모 답변", "CFO 렌즈", "내 경험", "출처"] as SummaryTab[]).map((item) => (
           <button
             key={item}
             type="button"
@@ -99,20 +102,13 @@ export function SummaryPage() {
           <article className="intro-script">
             <div className="intro-script__heading">
               <div>
-                <p className="eyebrow">FULL SCRIPT</p>
-                <h2>60초 자기소개 완성본</h2>
+                <p className="eyebrow">MY ORIGINAL SCRIPT</p>
+                <h2>사용자 자기소개 원문</h2>
               </div>
-              <Badge>소리 내어 3회</Badge>
+              <Badge>다듬지 않고 반영</Badge>
             </div>
             {selfIntroduction.fullAnswer.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </article>
-
-          <Accordion title="30초 압축본" eyebrow="갑작스러운 요청 대비">
-            <p className="intro-answer">{selfIntroduction.shortAnswer}</p>
-          </Accordion>
-          <Accordion title="90초 확장본" eyebrow="경력과 리더십까지 충분히">
-            {selfIntroduction.extendedAnswer.map((paragraph) => <p className="intro-answer" key={paragraph}>{paragraph}</p>)}
-          </Accordion>
 
           <div className="section-heading">
             <div>
@@ -220,6 +216,56 @@ export function SummaryPage() {
               ))}
             </section>
           ))}
+        </section>
+      )}
+
+      {tab === "메모 답변" && (
+        <section className="memo-answer-study">
+          <div className="callout">
+            <strong>메모가 입력된 질문 {memoAnswers.length}개</strong>
+            <p>핵심 질문에서 작성한 답변 메모가 있는 질문만 자동으로 모았습니다. 수정 내용도 즉시 같은 메모에 저장됩니다.</p>
+          </div>
+
+          {memoAnswers.length === 0 ? (
+            <div className="empty-state">
+              <strong>아직 작성된 답변 메모가 없습니다.</strong>
+              <p>‘핵심 질문’ 탭에서 답변 메모를 입력하면 이곳에 자동으로 추가됩니다.</p>
+            </div>
+          ) : (
+            memoAnswers.map((item, index) => (
+              <Accordion
+                key={item.id}
+                title={`${String(item.id).padStart(2, "0")}. ${item.question}`}
+                eyebrow={`${item.category} · 메모 완료`}
+                open={index === 0}
+              >
+                <div className="memo-answer__note">
+                  <strong>내가 준비한 답변</strong>
+                  <p>{coreQuestionNotes[String(item.id)]}</p>
+                </div>
+                <h3>답변 전략</h3>
+                <p className="answer-prompt"><strong>한 줄 결론</strong><br />{item.thesis}</p>
+                <div className="core-cues" aria-label="암기 키워드">
+                  {item.cues.map((cue) => <Badge key={cue}>{cue}</Badge>)}
+                </div>
+                <ol className="intro-notes">
+                  {item.framework.map((line) => <li key={line}>{line}</li>)}
+                </ol>
+                <div className="field core-question-note">
+                  <label htmlFor={`memo-answer-note-${item.id}`}>
+                    모아보기 답변 메모 · 질문 {item.id}
+                  </label>
+                  <textarea
+                    id={`memo-answer-note-${item.id}`}
+                    rows={6}
+                    value={coreQuestionNotes[String(item.id)] ?? ""}
+                    onChange={(event) => updateCoreQuestionNote(item.id, event.target.value)}
+                  />
+                  <small>입력 내용은 이 브라우저에 자동 저장됩니다. 내용을 모두 지우면 이 목록에서 제외됩니다.</small>
+                </div>
+              </Accordion>
+            ))
+          )}
         </section>
       )}
 
