@@ -225,6 +225,29 @@ export function SummaryPage() {
                   key={item.id}
                   title={`${String(item.id).padStart(2, "0")}. ${item.question}`}
                 >
+                  <div className="field core-question-note">
+                    <label htmlFor={`core-question-note-${item.id}`}>
+                      내가 생각하는 답변 메모 · 질문 {item.id}
+                    </label>
+                    <textarea
+                      id={`core-question-note-${item.id}`}
+                      rows={5}
+                      value={coreQuestionNotes[String(item.id)] ?? ""}
+                      placeholder="내 경험, 숫자, 실제로 말할 문장을 자유롭게 적으세요."
+                      onChange={(event) => updateCoreQuestionNote(item.id, event.target.value)}
+                    />
+                    <small>입력 내용은 이 브라우저에 자동 저장됩니다.</small>
+                    {extractKeywords(coreQuestionNotes[String(item.id)] ?? "").length > 0 && (
+                      <div className="auto-keywords" aria-label={`자동 추출 키워드 · 질문 ${item.id}`}>
+                        <strong>자동 추출 키워드</strong>
+                        <div>
+                          {extractKeywords(coreQuestionNotes[String(item.id)] ?? "").map((keyword) => (
+                            <Badge key={keyword}>{keyword}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <p className="answer-prompt"><strong>한 줄 결론</strong><br />{item.thesis}</p>
                   <div className="core-cues" aria-label={`암기 키워드 · 질문 ${item.id}`}>
                     {getKeywords(item).map((cue) => <Badge key={cue}>{cue}</Badge>)}
@@ -245,29 +268,6 @@ export function SummaryPage() {
                   <ol className="intro-notes">
                     {item.framework.map((line) => <li key={line}>{line}</li>)}
                   </ol>
-                  <div className="field core-question-note">
-                    <label htmlFor={`core-question-note-${item.id}`}>
-                      내가 생각하는 답변 메모 · 질문 {item.id}
-                    </label>
-                  <textarea
-                    id={`core-question-note-${item.id}`}
-                      rows={5}
-                      value={coreQuestionNotes[String(item.id)] ?? ""}
-                      placeholder="내 경험, 숫자, 실제로 말할 문장을 자유롭게 적으세요."
-                    onChange={(event) => updateCoreQuestionNote(item.id, event.target.value)}
-                  />
-                  <small>입력 내용은 이 브라우저에 자동 저장됩니다.</small>
-                  {extractKeywords(coreQuestionNotes[String(item.id)] ?? "").length > 0 && (
-                    <div className="auto-keywords" aria-label={`자동 추출 키워드 · 질문 ${item.id}`}>
-                      <strong>자동 추출 키워드</strong>
-                      <div>
-                        {extractKeywords(coreQuestionNotes[String(item.id)] ?? "").map((keyword) => (
-                          <Badge key={keyword}>{keyword}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  </div>
                   <h3>이어질 압박 질문</h3>
                   <ul className="intro-notes">
                     {item.followUps.map((question) => <li key={question}>{question}</li>)}

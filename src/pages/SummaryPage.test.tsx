@@ -123,4 +123,14 @@ describe("핵심 질문 답변 메모", () => {
     });
     expect(screen.getByLabelText("암기 키워드 · 질문 1")).toHaveTextContent("인하우스");
   });
+
+  it("핵심 질문 상세에서 사용자 메모를 답변 전략보다 먼저 표시한다", () => {
+    render(<SummaryPage />);
+    fireEvent.click(screen.getByRole("tab", { name: "핵심 질문" }));
+
+    const memo = screen.getByLabelText("내가 생각하는 답변 메모 · 질문 1");
+    const thesis = screen.getByText(coreInterviewQuestions[0]!.thesis);
+
+    expect(memo.compareDocumentPosition(thesis) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });
